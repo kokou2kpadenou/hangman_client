@@ -14,14 +14,24 @@ const SignIn = ({ dispatch }) => {
         body: JSON.stringify({ user: name }),
       });
 
-      const result = await response.json();
+      if (response.status === 200 || response.status === 201) {
+        const result = await response.json();
 
-      dispatch({ type: "SET_USER", payload: result.user });
-      dispatch({ type: "SET_SCORE", payload: result.score });
+        dispatch({ type: "SET_USER", payload: result.user });
+        dispatch({ type: "SET_SCORE", payload: result.score });
+        if (response.status === 200) {
+          toast(`${name}, welcome back to hangman`);
+        }
+        if (response.status === 201) {
+          toast(`${name}, welcome to hangman`);
+        }
+      }
+
+      if (response.status >= 400) {
+        toast("Ooops!, something went wrong.");
+      }
     } catch (error) {
-      console.log(error);
-
-      // toast(error.TypeError);
+      toast("Something went wrong check you network.");
     }
   };
 
@@ -44,6 +54,7 @@ const SignIn = ({ dispatch }) => {
         />
       </div>
       <button
+        autoFocus
         type="button"
         className="btn btn-primary btn-lg btn-block mb-5"
         disabled={!name}

@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import { toast } from "react-toastify";
 import Pagination from "../commun/table/pagination";
 import GamesTable from "./gamesTable";
 
@@ -14,6 +15,46 @@ const Games = ({ state, dispatch }) => {
 
   const handleSort = (sortColumn) => {
     dispatch({ type: "CHANGE_SORT", payload: sortColumn });
+  };
+
+  const handleCancel = async (id) => {
+    // Snapshot of games before cancel the game
+    const allGames = [...state.games];
+    // Cancel local the game
+    dispatch({ type: "CANCEL_GAME", payload: id });
+
+    // Call the API
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/game/cancel`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            user: state.user,
+            gameID: id,
+          }),
+        }
+      );
+
+      if (response.status === 200) {
+        // Game canceled sucessfully on the server
+        toast(`Game canceled sucessfully.`);
+      }
+
+      if (response.status >= 400) {
+        // Server can cancel the game. reverse the games
+        dispatch({ type: "SET_GAMES", payload: allGames });
+        const result = await response.json();
+        toast(result.errmsg);
+      }
+    } catch (error) {
+      // Something happen, reverse the games.
+      dispatch({ type: "SET_GAMES", payload: allGames });
+      toast("Something went wrong, check your network.");
+    }
   };
 
   const getSettings = () => {
@@ -44,6 +85,8 @@ const Games = ({ state, dispatch }) => {
           data={elements}
           sortColumn={state.sortColumn}
           onSort={handleSort}
+          user={state.user}
+          onCancel={handleCancel}
         />
       </div>
       <Pagination

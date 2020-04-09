@@ -3,53 +3,42 @@ export const initialState = {
   score: 0,
   currentGame: {},
   games: [],
+  scoresTables: [],
   keyboard: [
-    { key: "A", played: true },
-    { key: "B", played: false },
-    { key: "C", played: false },
-    { key: "D", played: false },
-    { key: "E", played: false },
-    { key: "F", played: false },
-    { key: "G", played: false },
-    { key: "H", played: false },
-    { key: "I", played: false },
-    { key: "J", played: false },
-    { key: "K", played: false },
-    { key: "L", played: false },
-    { key: "M", played: false },
-    { key: "N", played: false },
-    { key: "O", played: false },
-    { key: "P", played: false },
-    { key: "Q", played: false },
-    { key: "R", played: false },
-    { key: "S", played: false },
-    { key: "T", played: false },
-    { key: "U", played: false },
-    { key: "V", played: false },
-    { key: "W", played: false },
-    { key: "X", played: false },
-    { key: "Y", played: false },
-    { key: "Z", played: false }
-  ]
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
+  ],
+  pageSize: 6,
+  currentPage: 1,
+  sortColumn: { path: "user", order: "asc" },
 };
 
 export const reducer = (state, action) => {
   switch (action.type) {
-    case "KEY_UPDATE":
-      return {
-        ...state,
-        keyboard: state.keyboard.map(elt =>
-          elt.key === action.payload.key
-            ? { ...elt, played: action.payload.played }
-            : elt
-        )
-      };
-    case "KEYBOARD_RESET":
-      return {
-        ...state,
-        keyboard: state.keyboard.map(elt => ({ ...elt, played: false }))
-      };
-
     case "SET_SCORE":
       return { ...state, score: action.payload };
 
@@ -59,8 +48,30 @@ export const reducer = (state, action) => {
     case "SET_CURRENTGAME":
       return { ...state, currentGame: action.payload };
 
+    case "CANCEL_GAME":
+      return {
+        ...state,
+        games: state.games.map((game) =>
+          game._id === action.payload
+            ? { ...game, gameStatus: "canceled" }
+            : game
+        ),
+      };
+
     case "SET_GAMES":
       return { ...state, games: action.payload };
+
+    case "SET_SCORESTABLE":
+      return { ...state, scoresTables: action.payload };
+
+    case "ADD_GAME":
+      return { ...state, games: [...state.games, action.payload] };
+
+    case "CHANGE_SORT":
+      return { ...state, sortColumn: action.payload };
+
+    case "PAGE_CHANGE":
+      return { ...state, currentPage: action.payload };
 
     default:
       throw new Error();

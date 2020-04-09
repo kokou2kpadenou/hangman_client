@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useReducer, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Header from "./components/header/header";
+import Main from "./components/main/main";
+import Footer from "./components/footer/footer";
+import Scores from "./components/scores/scores";
+import Modal from "./components/commun/modal/modal";
+
+import { initialState, reducer } from "./reducer";
+import Games from "./components/allGames/games";
+
+let localState = JSON.parse(sessionStorage.getItem("state"));
 
 function App() {
+  const [state, dispatch] = useReducer(reducer, localState || initialState);
+
+  useEffect(() => {
+    sessionStorage.setItem("state", JSON.stringify(state));
+  }, [state]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ToastContainer />
+      <Modal title="Scores Table" modalId="scores">
+        <Scores state={state} dispatch={dispatch} />
+      </Modal>
+      <Modal title="All Games" modalId="allgames">
+        <Games state={state} dispatch={dispatch} />
+      </Modal>
+      <Header state={state} dispatch={dispatch} />
+      <Main state={state} dispatch={dispatch} />
+      <Footer />
     </div>
   );
 }

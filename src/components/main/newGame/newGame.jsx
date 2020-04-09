@@ -20,9 +20,9 @@ const NewGame = ({ user, dispatch }) => {
         }),
       });
 
-      if (response.status === 201) {
-        const result = await response.json();
+      const result = await response.json();
 
+      if (response.status === 201) {
         dispatch({ type: "ADD_GAME", payload: result });
 
         setName("");
@@ -34,7 +34,7 @@ const NewGame = ({ user, dispatch }) => {
         toast("Ooops!, something went wrong.");
       }
     } catch (error) {
-      toast("Something went wrong check you network.");
+      toast("Something went wrong, check your network.");
     }
     setPss(false);
   };

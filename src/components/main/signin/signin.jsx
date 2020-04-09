@@ -3,8 +3,10 @@ import { toast } from "react-toastify";
 
 const SignIn = ({ dispatch }) => {
   const [name, setName] = useState("");
+  const [pss, setPss] = useState(false);
 
   const _click = async () => {
+    setPss(true);
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/user`, {
         method: "POST",
@@ -14,9 +16,9 @@ const SignIn = ({ dispatch }) => {
         body: JSON.stringify({ user: name }),
       });
 
-      if (response.status === 200 || response.status === 201) {
-        const result = await response.json();
+      const result = await response.json();
 
+      if (response.status === 200 || response.status === 201) {
         dispatch({ type: "SET_USER", payload: result.user });
         dispatch({ type: "SET_SCORE", payload: result.score });
         if (response.status === 200) {
@@ -31,7 +33,8 @@ const SignIn = ({ dispatch }) => {
         toast("Ooops!, something went wrong.");
       }
     } catch (error) {
-      toast("Something went wrong check you network.");
+      setPss(false);
+      toast("Something went wrong, check your network.");
     }
   };
 
@@ -51,15 +54,23 @@ const SignIn = ({ dispatch }) => {
           aria-describedby="basic-addon1"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          disabled={pss}
         />
       </div>
       <button
         autoFocus
         type="button"
         className="btn btn-primary btn-lg btn-block mb-5"
-        disabled={!name}
+        disabled={!name || pss}
         onClick={() => _click()}
       >
+        {pss && (
+          <span
+            className="spinner-grow spinner-grow-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+        )}
         Sign In
       </button>
     </>

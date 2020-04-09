@@ -1,9 +1,10 @@
 import React from "react";
 import { toast } from "react-toastify";
 
-const Cancel = ({ state, dispatch }) => {
+const Cancel = ({ state, dispatch, setSpinner }) => {
   const _CancelClick = async () => {
     //
+    setSpinner(true);
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/game/cancel`,
@@ -34,8 +35,9 @@ const Cancel = ({ state, dispatch }) => {
         toast("Ooops!, something went wrong.");
       }
     } catch (error) {
-      toast("Something went wrong check you network.");
+      toast("Something went wrong, check your network.");
     }
+    setSpinner(false);
   };
   return (
     <button

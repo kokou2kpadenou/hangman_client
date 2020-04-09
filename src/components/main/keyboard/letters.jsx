@@ -1,17 +1,18 @@
 import React from "react";
 import { toast } from "react-toastify";
 
-const Letters = ({ state, dispatch }) => {
+const Letters = ({ state, dispatch, setSpinner }) => {
   const { user, keyboard, currentGame } = state;
   const keyPlayed = currentGame.guesses.map((elt) => elt.letterGuessed);
 
   const _keyClick = async (e) => {
     //
+    setSpinner(true);
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/game/guess`,
         {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json;charset=utf-8",
           },
@@ -36,8 +37,9 @@ const Letters = ({ state, dispatch }) => {
         toast("Ooops!, something went wrong.");
       }
     } catch (error) {
-      toast("Something went wrong, check you network.");
+      toast("Something went wrong, check your network.");
     }
+    setSpinner(false);
   };
 
   return keyboard.map((elt) => (

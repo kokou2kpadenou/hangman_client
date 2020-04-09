@@ -33,7 +33,8 @@ const Playboard = ({ state }) => {
 
           {state.currentGame.gameStatus === "game over" && (
             <span>
-              This game is over and the winner is{" "}
+              <span className="text-danger">{state.currentGame.gameWord}</span>{" "}
+              Game Over!!! winner is{" "}
               <span className="text-danger">{state.currentGame.winner}</span>,
               please click Next Game button.
             </span>

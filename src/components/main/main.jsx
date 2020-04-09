@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 import _ from "lodash";
 import Keyboard from "./keyboard/keyboard";
@@ -7,10 +7,13 @@ import SignIn from "./signin/signin";
 import NewGame from "./newGame/newGame";
 
 const Main = ({ state, dispatch }) => {
+  const [pss, setPss] = useState(false);
+
   const _currentClick = async () => {
+    setPss(true);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/game/current/${state.user}`,
+        `${process.env.REACT_APP_API_URL}/game/current`,
         {
           method: "GET",
           headers: {
@@ -19,22 +22,19 @@ const Main = ({ state, dispatch }) => {
         }
       );
 
+      const result = await response.json();
+
       if (response.status === 200) {
-        const result = await response.json();
-
-        console.log(result);
-
         dispatch({ type: "SET_CURRENTGAME", payload: result });
-
-        // toast(`Game created sucessfully.`);
       }
 
       if (response.status >= 400) {
         toast("Ooops!, something went wrong.");
       }
     } catch (error) {
-      toast("Something went wrong check you network.");
+      toast("Something went wrong, check your network.");
     }
+    setPss(false);
   };
   return (
     <main className="container">
@@ -64,10 +64,18 @@ const Main = ({ state, dispatch }) => {
                   <button
                     type="button"
                     className="btn btn-warning"
+                    disabled={pss}
                     onClick={() => {
                       _currentClick();
                     }}
                   >
+                    {pss && (
+                      <span
+                        className="spinner-grow spinner-grow-sm"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                    )}
                     Get Current Game
                   </button>
                 </div>

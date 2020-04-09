@@ -1,9 +1,10 @@
 import React from "react";
 import { toast } from "react-toastify";
 
-const Refresh = ({ state, dispatch }) => {
+const Refresh = ({ state, dispatch, setSpinner }) => {
   const _refreshClick = async () => {
     //
+    setSpinner(true);
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/game/by/${state.currentGame._id}`,
@@ -15,23 +16,23 @@ const Refresh = ({ state, dispatch }) => {
         }
       );
 
-      if (response.status === 200) {
-        const result = await response.json();
-        console.log(result);
+      const result = await response.json();
 
+      if (response.status === 200) {
         dispatch({ type: "SET_CURRENTGAME", payload: result });
       }
 
-      if (response.status === 410) {
-        toast("Ooops!, something went wrong.");
+      if (response.status >= 400 && response.status < 500) {
+        toast(result.errmsg);
       }
 
-      if (response.status === 500) {
+      if (response.status >= 500) {
         toast("Ooops!, something went wrong.");
       }
     } catch (error) {
-      toast("Something went wrong check you network.");
+      toast("Something went wrong, check your network.");
     }
+    setSpinner(false);
   };
   return (
     <button

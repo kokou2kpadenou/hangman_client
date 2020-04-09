@@ -1,11 +1,12 @@
 import React from "react";
 import { toast } from "react-toastify";
 
-const NextGame = ({ state, dispatch }) => {
+const NextGame = ({ state, dispatch, setSpinner }) => {
   const _nextClick = async () => {
+    setSpinner(true);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/game/current/${state.user}`,
+        `${process.env.REACT_APP_API_URL}/game/current`,
         {
           method: "GET",
           headers: {
@@ -19,13 +20,10 @@ const NextGame = ({ state, dispatch }) => {
 
         dispatch({ type: "SET_CURRENTGAME", payload: result });
       }
-
-      if (response.status >= 400) {
-        toast("Ooops!, something went wrong.");
-      }
     } catch (error) {
-      toast("Something went wrong check you network.");
+      toast("Something went wrong, check your network.");
     }
+    setSpinner(false);
   };
 
   return (

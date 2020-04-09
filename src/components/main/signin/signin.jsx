@@ -53,7 +53,7 @@ const SignIn = ({ dispatch }) => {
           aria-label="Name"
           aria-describedby="basic-addon1"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value.replace(/[^A-Za-z]/gi, ""))}
           disabled={pss}
         />
       </div>

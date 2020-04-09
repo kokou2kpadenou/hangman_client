@@ -54,7 +54,7 @@ const NewGame = ({ user, dispatch }) => {
           placeholder="Propose a word ..."
           aria-label="Propose a word ..."
           aria-describedby="basic-addon1"
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value.replace(/[^A-Za-z]/gi, ""))}
           disabled={pss}
         />
       </div>

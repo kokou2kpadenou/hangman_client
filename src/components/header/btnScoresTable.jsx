@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 
 const BtnScoresTable = ({ state, dispatch }) => {
   const _click = async () => {
+    dispatch({ type: "CHANGE_SORT", payload: { path: "user", order: "asc" } });
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/users/scores`,
@@ -14,9 +15,9 @@ const BtnScoresTable = ({ state, dispatch }) => {
         }
       );
 
-      if (response.status === 200) {
-        const result = await response.json();
+      const result = await response.json();
 
+      if (response.status === 200) {
         dispatch({ type: "SET_SCORESTABLE", payload: result });
       }
 
@@ -24,7 +25,7 @@ const BtnScoresTable = ({ state, dispatch }) => {
         toast("Ooops!, something went wrong.");
       }
     } catch (error) {
-      toast("Something went wrong check you network.");
+      toast("Something went wrong, check your network.");
     }
   };
   return (

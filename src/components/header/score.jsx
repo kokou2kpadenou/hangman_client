@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 
 const Score = ({ state, dispatch }) => {
+  const [pss, setPss] = useState(false);
+
   const _click = async () => {
+    setPss(true);
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/user/${state.user}`,
@@ -14,9 +17,9 @@ const Score = ({ state, dispatch }) => {
         }
       );
 
-      if (response.status === 200) {
-        const result = await response.json();
+      const result = await response.json();
 
+      if (response.status === 200) {
         dispatch({ type: "SET_SCORE", payload: result.score });
       }
 
@@ -24,8 +27,9 @@ const Score = ({ state, dispatch }) => {
         toast("Ooops!, something went wrong.");
       }
     } catch (error) {
-      toast("Something went wrong check you network.");
+      toast("Something went wrong, check your network.");
     }
+    setPss(false);
   };
 
   return (
@@ -33,10 +37,18 @@ const Score = ({ state, dispatch }) => {
       type="button"
       className="btn btn-primary"
       style={{ fontSize: "0.8rem" }}
+      disabled={pss}
       onClick={() => {
         _click();
       }}
     >
+      {pss && (
+        <span
+          className="spinner-grow spinner-grow-sm"
+          role="status"
+          aria-hidden="true"
+        ></span>
+      )}
       Score <span className="badge badge-light">{state.score}</span>
     </button>
   );

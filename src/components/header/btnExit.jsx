@@ -8,6 +8,7 @@ const BtnExit = ({ dispatch }) => {
       onClick={() => {
         dispatch({ type: "SET_USER", payload: "" });
         dispatch({ type: "SET_CURRENTGAME", payload: {} });
+        dispatch({ type: "SET_GAMES", payload: {} });
       }}
     >
       Exit
